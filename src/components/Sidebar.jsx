@@ -4,7 +4,9 @@ export default function Sidebar({ activePanel, setActivePanel }) {
   }
 
   return (
+    
     <div className="sidebar">
+
       <button
         className={activePanel === "home" ? "sidebar-btn active" : "sidebar-btn"}
         onClick={() => togglePanel("home")}
