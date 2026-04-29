@@ -27,7 +27,7 @@ export default function MapShowcase() {
         <h3>2,847</h3>
 
         <MapContainer
-          center={[35, 10]}
+          center={[35, -10]}
           zoom={2}
           zoomControl={false}
           attributionControl={false}

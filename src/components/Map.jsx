@@ -1,15 +1,24 @@
 import { useState, useEffect } from "react"
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from "react-leaflet"
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMapEvents,
+  useMap,
+} from "react-leaflet"
 import L from "leaflet"
-import "leaflet/dist/leaflet.css"
 
-delete L.Icon.Default.prototype._getIconUrl
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet/dist/images/marker-shadow.png",
+// 🔥 SAJÁT MARKER IKON
+const pinkIcon = L.icon({
+  iconUrl: "src/assets/map-marker-svgrepo-com.svg",
+  iconRetinaUrl: "src/assets/map-marker-svgrepo-com.svg",
+  iconSize: [42, 42],
+  iconAnchor: [21, 42],
+  popupAnchor: [0, -42],
 })
 
+// 🔁 REVERSE GEOCODING
 async function reverseGeocode(lat, lng) {
   const params = new URLSearchParams({
     lat: String(lat),
@@ -20,18 +29,8 @@ async function reverseGeocode(lat, lng) {
   })
 
   const response = await fetch(
-    `https://nominatim.openstreetmap.org/reverse?${params.toString()}`,
-    {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-      },
-    }
+    `https://nominatim.openstreetmap.org/reverse?${params.toString()}`
   )
-
-  if (!response.ok) {
-    throw new Error("Nem sikerült lekérni a helyadatokat.")
-  }
 
   const data = await response.json()
 
@@ -41,16 +40,17 @@ async function reverseGeocode(lat, lng) {
   }
 }
 
+// 🖱️ TÉRKÉP KATTINTÁS
 function MapClickHandler({ onMapClick }) {
   useMapEvents({
     click(e) {
       onMapClick(e.latlng)
     },
   })
-
   return null
 }
 
+// ✈️ FLY TO
 function FlyToPoint({ point }) {
   const map = useMap()
 
@@ -78,6 +78,7 @@ export default function Map({ points, setPoints, selectedPoint }) {
     image: null,
   })
 
+  // 📍 TÉRKÉP KATTINTÁS
   const handleMapClick = async (latlng) => {
     setSelectedLatLng(latlng)
     setTempMarker(latlng)
@@ -94,9 +95,6 @@ export default function Map({ points, setPoints, selectedPoint }) {
         address.amenity ||
         address.building ||
         address.road ||
-        address.suburb ||
-        address.village ||
-        address.town ||
         address.city ||
         result.displayName ||
         ""
@@ -105,9 +103,7 @@ export default function Map({ points, setPoints, selectedPoint }) {
         ...prev,
         title: autoTitle,
       }))
-    } catch (error) {
-      console.error(error)
-
+    } catch {
       setFormData((prev) => ({
         ...prev,
         title: "",
@@ -117,6 +113,7 @@ export default function Map({ points, setPoints, selectedPoint }) {
     }
   }
 
+  // ✏️ FORM CHANGE
   const handleChange = (e) => {
     const { name, value, files } = e.target
 
@@ -134,6 +131,7 @@ export default function Map({ points, setPoints, selectedPoint }) {
     }))
   }
 
+  // 🔄 RESET
   const resetForm = () => {
     setFormData({
       title: "",
@@ -147,6 +145,7 @@ export default function Map({ points, setPoints, selectedPoint }) {
     setShowForm(false)
   }
 
+  // 💾 SAVE
   const handleSave = () => {
     if (!selectedLatLng) return
 
@@ -163,7 +162,9 @@ export default function Map({ points, setPoints, selectedPoint }) {
       location: formData.title,
       category: formData.category,
       description: formData.description,
-      imagePreview: formData.image ? URL.createObjectURL(formData.image) : null,
+      imagePreview: formData.image
+        ? URL.createObjectURL(formData.image)
+        : null,
     }
 
     setPoints((prev) => [...prev, newPoint])
@@ -172,6 +173,7 @@ export default function Map({ points, setPoints, selectedPoint }) {
 
   return (
     <div className="map-wrapper">
+      {/* 📝 FORM */}
       {showForm && (
         <div className="point-form">
           <h3>Új pont felvétele</h3>
@@ -184,7 +186,11 @@ export default function Map({ points, setPoints, selectedPoint }) {
             onChange={handleChange}
           />
 
-          <select name="category" value={formData.category} onChange={handleChange}>
+          <select
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+          >
             <option value="">Minek mented el?</option>
             <option value="Étterem">Étterem</option>
             <option value="Látnivaló">Látnivaló</option>
@@ -200,47 +206,56 @@ export default function Map({ points, setPoints, selectedPoint }) {
             onChange={handleChange}
           />
 
-          <input type="file" name="image" accept="image/*" onChange={handleChange} />
+          <input
+            type="file"
+            name="image"
+            accept="image/*"
+            onChange={handleChange}
+          />
 
           {selectedLatLng && (
-            <p className="coords">
+            <p>
               Lat: {selectedLatLng.lat.toFixed(5)}, Lng:{" "}
               {selectedLatLng.lng.toFixed(5)}
             </p>
           )}
 
-          <div className="form-actions">
-            <button onClick={handleSave} disabled={loadingPlace}>
-              Mentés
-            </button>
-            <button type="button" onClick={resetForm}>
-              Mégse
-            </button>
+          <div>
+            <button onClick={handleSave}>Mentés</button>
+            <button onClick={resetForm}>Mégse</button>
           </div>
         </div>
       )}
 
+      {/* 🗺️ MAP */}
       <MapContainer
         center={[47.4979, 19.0402]}
         zoom={13}
         style={{ height: "100vh", width: "100%" }}
       >
-        <TileLayer
-          attribution="&copy; OpenStreetMap"
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
         {selectedPoint && <FlyToPoint point={selectedPoint} />}
 
         <MapClickHandler onMapClick={handleMapClick} />
 
+        {/* TEMP MARKER */}
         {tempMarker && (
-          <Marker position={[tempMarker.lat, tempMarker.lng]}>
+          <Marker
+            position={[tempMarker.lat, tempMarker.lng]}
+            icon={pinkIcon}
+          >
             <Popup>Új pont helye</Popup>
           </Marker>
         )}
 
+        {/* SAVED POINTS */}
         {points.map((point) => (
-          <Marker key={point.id} position={[point.lat, point.lng]}>
+          <Marker
+            key={point.id}
+            position={[point.lat, point.lng]}
+            icon={pinkIcon}
+          >
             <Popup>
               <div>
                 <strong>{point.title}</strong>

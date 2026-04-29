@@ -493,7 +493,7 @@ body {
 }
 
 .auth-grid {
-  display: grid;
+  display: inline-grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
@@ -679,7 +679,7 @@ body {
 .map-showcase {
   margin: 48px auto 0;
   display: grid;
-  grid-template-columns: 1.7fr 1fr;
+  grid-template-columns: 2fr 1fr;
   gap: 18px;
 }
 
