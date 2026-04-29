@@ -9,17 +9,16 @@ import {
 } from "react-leaflet"
 import L from "leaflet"
 import MarkerClusterGroup from "react-leaflet-cluster"
+import markerIcon from "../assets/map-marker-svgrepo-com-green.svg"
 
-// 🔥 SAJÁT MARKER IKON
 const pinkIcon = L.icon({
-  iconUrl: "src/assets/map-marker-svgrepo-com.svg",
-  iconRetinaUrl: "src/assets/map-marker-svgrepo-com.svg",
+  iconUrl: markerIcon,
+  iconRetinaUrl: markerIcon,
   iconSize: [42, 42],
   iconAnchor: [21, 42],
   popupAnchor: [0, -42],
 })
 
-// 🔁 REVERSE GEOCODING
 async function reverseGeocode(lat, lng) {
   const params = new URLSearchParams({
     lat: String(lat),
@@ -33,6 +32,10 @@ async function reverseGeocode(lat, lng) {
     `https://nominatim.openstreetmap.org/reverse?${params.toString()}`
   )
 
+  if (!response.ok) {
+    throw new Error("Nem sikerült lekérni a helyadatokat.")
+  }
+
   const data = await response.json()
 
   return {
@@ -41,17 +44,16 @@ async function reverseGeocode(lat, lng) {
   }
 }
 
-// 🖱️ TÉRKÉP KATTINTÁS
 function MapClickHandler({ onMapClick }) {
   useMapEvents({
     click(e) {
       onMapClick(e.latlng)
     },
   })
+
   return null
 }
 
-// ✈️ FLY TO
 function FlyToPoint({ point }) {
   const map = useMap()
 
@@ -61,12 +63,18 @@ function FlyToPoint({ point }) {
         duration: 1.5,
       })
     }
-  }, [point])
+  }, [point, map])
 
   return null
 }
 
-export default function Map({ points, setPoints, selectedPoint }) {
+export default function Map({
+  points,
+  setPoints,
+  selectedPoint,
+  setSelectedPoint,
+  setActivePanel,
+}) {
   const [selectedLatLng, setSelectedLatLng] = useState(null)
   const [tempMarker, setTempMarker] = useState(null)
   const [showForm, setShowForm] = useState(false)
@@ -74,12 +82,12 @@ export default function Map({ points, setPoints, selectedPoint }) {
 
   const [formData, setFormData] = useState({
     title: "",
+    country: "",
     category: "",
     description: "",
     image: null,
   })
 
-  // 📍 TÉRKÉP KATTINTÁS
   const handleMapClick = async (latlng) => {
     setSelectedLatLng(latlng)
     setTempMarker(latlng)
@@ -103,18 +111,19 @@ export default function Map({ points, setPoints, selectedPoint }) {
       setFormData((prev) => ({
         ...prev,
         title: autoTitle,
+        country: address.country || "",
       }))
     } catch {
       setFormData((prev) => ({
         ...prev,
         title: "",
+        country: "",
       }))
     } finally {
       setLoadingPlace(false)
     }
   }
 
-  // ✏️ FORM CHANGE
   const handleChange = (e) => {
     const { name, value, files } = e.target
 
@@ -132,10 +141,10 @@ export default function Map({ points, setPoints, selectedPoint }) {
     }))
   }
 
-  // 🔄 RESET
   const resetForm = () => {
     setFormData({
       title: "",
+      country: "",
       category: "",
       description: "",
       image: null,
@@ -146,7 +155,6 @@ export default function Map({ points, setPoints, selectedPoint }) {
     setShowForm(false)
   }
 
-  // 💾 SAVE
   const handleSave = () => {
     if (!selectedLatLng) return
 
@@ -161,11 +169,10 @@ export default function Map({ points, setPoints, selectedPoint }) {
       lng: selectedLatLng.lng,
       title: formData.title,
       location: formData.title,
+      country: formData.country,
       category: formData.category,
       description: formData.description,
-      imagePreview: formData.image
-        ? URL.createObjectURL(formData.image)
-        : null,
+      imagePreview: formData.image ? URL.createObjectURL(formData.image) : null,
     }
 
     setPoints((prev) => [...prev, newPoint])
@@ -174,7 +181,6 @@ export default function Map({ points, setPoints, selectedPoint }) {
 
   return (
     <div className="map-wrapper">
-      {/* 📝 FORM */}
       {showForm && (
         <div className="point-form">
           <h3>Új pont felvétele</h3>
@@ -222,13 +228,16 @@ export default function Map({ points, setPoints, selectedPoint }) {
           )}
 
           <div>
-            <button onClick={handleSave}>Mentés</button>
-            <button onClick={resetForm}>Mégse</button>
+            <button onClick={handleSave} disabled={loadingPlace}>
+              Mentés
+            </button>
+            <button type="button" onClick={resetForm}>
+              Mégse
+            </button>
           </div>
         </div>
       )}
 
-      {/* 🗺️ MAP */}
       <MapContainer
         center={[47.4979, 19.0402]}
         zoom={13}
@@ -240,56 +249,68 @@ export default function Map({ points, setPoints, selectedPoint }) {
 
         <MapClickHandler onMapClick={handleMapClick} />
 
-        {/* TEMP MARKER */}
         {tempMarker && (
-          <Marker
-            position={[tempMarker.lat, tempMarker.lng]}
-            icon={pinkIcon}
-          >
+          <Marker position={[tempMarker.lat, tempMarker.lng]} icon={pinkIcon}>
             <Popup>Új pont helye</Popup>
           </Marker>
         )}
 
-        {/* SAVED POINTS */}
-        <MarkerClusterGroup chunkedLoading iconCreateFunction={(cluster) => {
-          const count = cluster.getChildCount()
+        <MarkerClusterGroup
+          chunkedLoading
+          iconCreateFunction={(cluster) => {
+            const count = cluster.getChildCount()
 
-          return L.divIcon({
-            html: `<div class="custom-cluster">${count}</div>`,
-            className: "cluster-wrapper",
-            iconSize: [50, 50],
-          })
-        }} >
-          
-        {points.map((point) => (
-          <Marker
-            key={point.id}
-            position={[point.lat, point.lng]}
-            icon={pinkIcon}
-          >
-            <Popup>
-              <div>
-                <strong>{point.title}</strong>
-                <br />
-                {point.category && <small>{point.category}</small>}
-                {point.description && <p>{point.description}</p>}
-                {point.imagePreview && (
-                  <img
-                    src={point.imagePreview}
-                    alt={point.title}
-                    style={{
-                      width: "180px",
-                      borderRadius: "30px",
-                      marginTop: "8px",
-                      
-                    }}
-                  />
-                )}
-              </div>
-            </Popup>
-          </Marker>
-        ))}
-      </MarkerClusterGroup>
+            return L.divIcon({
+              html: `<div class="custom-cluster">${count}</div>`,
+              className: "cluster-wrapper",
+              iconSize: [50, 50],
+            })
+          }}
+        >
+          {points.map((point) => (
+            <Marker
+              key={point.id}
+              position={[point.lat, point.lng]}
+              icon={pinkIcon}
+              eventHandlers={{
+                click: () => {
+                  setSelectedPoint(point)
+                  setActivePanel("home")
+                },
+              }}
+            >
+              <Popup>
+                <div>
+                  <strong>{point.title}</strong>
+                  <br />
+
+                  {point.category && <small>{point.category}</small>}
+
+                  {point.country && (
+                    <>
+                      <br />
+                      <small>{point.country}</small>
+                    </>
+                  )}
+
+                  {point.description && <p>{point.description}</p>}
+
+                  {point.imagePreview && (
+                    <img
+                      src={point.imagePreview}
+                      alt={point.title}
+                      style={{
+                        width: "180px",
+                        borderRadius: "30px",
+                        marginTop: "8px",
+                      }}
+                    />
+                  )}
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+        </MarkerClusterGroup>
       </MapContainer>
     </div>
   )

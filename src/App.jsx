@@ -66,7 +66,13 @@ function App() {
         <SettingsPanel user={user} setUser={setUser} />
       )}
 
-      <Map points={points} setPoints={setPoints} selectedPoint={selectedPoint} />
+      <Map
+      points={points}
+      setPoints={setPoints}
+      selectedPoint={selectedPoint}
+      setSelectedPoint={setSelectedPoint}
+      setActivePanel={setActivePanel}
+    />
 
       <div className="profile-button" onClick={() => setActivePanel("settings")}>
         {user?.name?.charAt(0).toUpperCase()}

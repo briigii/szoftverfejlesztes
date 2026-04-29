@@ -1,6 +1,7 @@
 import { useState } from "react"
 import TextField from "@mui/material/TextField"
 import InputAdornment from "@mui/material/InputAdornment"
+import searchIcon from "../assets/Search_Magnifying_Glass.png"
 
 export default function SavedPointsPanel({
   points,
@@ -16,12 +17,12 @@ export default function SavedPointsPanel({
     return (
       point.title?.toLowerCase().includes(search) ||
       point.category?.toLowerCase().includes(search) ||
+      point.country?.toLowerCase().includes(search) ||
       point.location?.toLowerCase().includes(search) ||
       point.description?.toLowerCase().includes(search)
     )
   })
 
-  // 📄 RÉSZLET NÉZET
   if (selectedPoint) {
     return (
       <div className="saved-panel">
@@ -43,9 +44,15 @@ export default function SavedPointsPanel({
           📍 {selectedPoint.location || selectedPoint.title}
         </div>
 
-        {selectedPoint.category && (
-          <span className="detail-tag">{selectedPoint.category}</span>
-        )}
+        <div className="point-tags">
+          {selectedPoint.category && (
+            <span className="tag">{selectedPoint.category}</span>
+          )}
+
+          {selectedPoint.country && (
+            <span className="country-tag">{selectedPoint.country}</span>
+          )}
+        </div>
 
         {selectedPoint.description && (
           <p className="detail-description">{selectedPoint.description}</p>
@@ -54,12 +61,11 @@ export default function SavedPointsPanel({
     )
   }
 
-  // 📋 LISTA NÉZET
   return (
     <div className="saved-panel">
       <div className="panel-header">
         <TextField
-          placeholder="Keresés név vagy tag alapján..."
+          placeholder="Keresés név, tag vagy ország alapján..."
           variant="outlined"
           size="small"
           fullWidth
@@ -68,7 +74,7 @@ export default function SavedPointsPanel({
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <img src="src/assets/Search_Magnifying_Glass.png" alt="" />
+                <img className="search-icon" src={searchIcon} alt="Keresés" />
               </InputAdornment>
             ),
           }}
@@ -101,7 +107,12 @@ export default function SavedPointsPanel({
                 📍 {point.location || point.title}
               </div>
 
-              {point.category && <span className="tag">{point.category}</span>}
+              <div className="point-tags">
+                {point.category && <span className="tag">{point.category}</span>}
+                {point.country && (
+                  <span className="country-tag">{point.country}</span>
+                )}
+              </div>
 
               {point.description && <p>{point.description}</p>}
             </div>
@@ -110,6 +121,4 @@ export default function SavedPointsPanel({
       </div>
     </div>
   )
-
-   
 }
