@@ -19,6 +19,23 @@ const pinkIcon = L.icon({
   popupAnchor: [0, -42],
 })
 
+const createEmojiIcon = (emoji) =>
+  L.divIcon({
+    html: `<div class="emoji-marker">${emoji}</div>`,
+    className: "",
+    iconSize: [40, 40],
+    iconAnchor: [20, 40],
+    popupAnchor: [0, -40],
+  })
+
+const getMarkerIcon = (emoji) => {
+  if (!emoji || emoji === "default") {
+    return pinkIcon
+  }
+
+  return createEmojiIcon(emoji)
+}
+
 async function reverseGeocode(lat, lng) {
   const params = new URLSearchParams({
     lat: String(lat),
@@ -84,6 +101,7 @@ export default function Map({
     title: "",
     country: "",
     category: "",
+    markerEmoji: "default",
     description: "",
     image: null,
   })
@@ -93,6 +111,11 @@ export default function Map({
     setTempMarker(latlng)
     setShowForm(true)
     setLoadingPlace(true)
+
+    setFormData((prev) => ({
+      ...prev,
+      markerEmoji: "default",
+    }))
 
     try {
       const result = await reverseGeocode(latlng.lat, latlng.lng)
@@ -146,6 +169,7 @@ export default function Map({
       title: "",
       country: "",
       category: "",
+      markerEmoji: "default",
       description: "",
       image: null,
     })
@@ -171,6 +195,7 @@ export default function Map({
       location: formData.title,
       country: formData.country,
       category: formData.category,
+      markerEmoji: formData.markerEmoji,
       description: formData.description,
       imagePreview: formData.image ? URL.createObjectURL(formData.image) : null,
     }
@@ -193,18 +218,57 @@ export default function Map({
             onChange={handleChange}
           />
 
-          <select
+          <input
+            type="text"
             name="category"
+            list="category-options"
+            placeholder="Minek mented el? pl. Kedvenc"
             value={formData.category}
             onChange={handleChange}
-          >
-            <option value="">Minek mented el?</option>
-            <option value="Étterem">Étterem</option>
-            <option value="Látnivaló">Látnivaló</option>
-            <option value="Élmény">Élmény</option>
-            <option value="Szállás">Szállás</option>
-            <option value="Egyéb">Egyéb</option>
-          </select>
+          />
+
+          <datalist id="category-options">
+            <option value="Étterem" />
+            <option value="Látnivaló" />
+            <option value="Élmény" />
+            <option value="Szállás" />
+            <option value="Kedvenc" />
+            <option value="Egyéb" />
+          </datalist>
+
+          <div className="emoji-picker">
+            {[
+              "default",
+              "⭐",
+              "❤️",
+              "🍽️",
+              "🏨",
+              "☕",
+              "🌊",
+              "🚗",
+              "✈️",
+              "🎥",
+              "🏠",
+            ].map((emoji) => (
+              <button
+                key={emoji}
+                type="button"
+                className={
+                  formData.markerEmoji === emoji
+                    ? "emoji-btn active"
+                    : "emoji-btn"
+                }
+                onClick={() =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    markerEmoji: emoji,
+                  }))
+                }
+              >
+                {emoji === "default" ? "📍" : emoji}
+              </button>
+            ))}
+          </div>
 
           <textarea
             name="description"
@@ -250,7 +314,10 @@ export default function Map({
         <MapClickHandler onMapClick={handleMapClick} />
 
         {tempMarker && (
-          <Marker position={[tempMarker.lat, tempMarker.lng]} icon={pinkIcon}>
+          <Marker
+            position={[tempMarker.lat, tempMarker.lng]}
+            icon={getMarkerIcon(formData.markerEmoji)}
+          >
             <Popup>Új pont helye</Popup>
           </Marker>
         )}
@@ -271,7 +338,7 @@ export default function Map({
             <Marker
               key={point.id}
               position={[point.lat, point.lng]}
-              icon={pinkIcon}
+              icon={getMarkerIcon(point.markerEmoji)}
               eventHandlers={{
                 click: () => {
                   setSelectedPoint(point)
@@ -284,14 +351,14 @@ export default function Map({
                   <strong>{point.title}</strong>
                   <br />
 
-                  {point.category && <small>{point.category}</small>}
-
-                  {point.country && (
+                  {point.category && (
                     <>
+                      <small>{point.category}</small>
                       <br />
-                      <small>{point.country}</small>
                     </>
                   )}
+
+                  {point.country && <small>{point.country}</small>}
 
                   {point.description && <p>{point.description}</p>}
 
