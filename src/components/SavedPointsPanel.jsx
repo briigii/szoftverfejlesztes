@@ -50,208 +50,230 @@ export default function SavedPointsPanel({
   }
 
   const handleDelete = () => {
-    const confirmed = window.confirm("Biztosan törölni szeretnéd ezt a pontot?")
-    if (!confirmed) return
-
-    onDeletePoint(selectedPoint.id)
+    if (window.confirm("Biztosan törölni szeretnéd ezt a pontot?")) {
+      onDeletePoint(selectedPoint.id)
+    }
   }
 
-  if (selectedPoint) {
-    return (
-      <div className="saved-panel">
-        <div className="detail-topbar">
-        <button className="back-btn" onClick={onBack}>
-          ← Vissza
-        </button>
+  return (
+    <>
+      <div className="saved-panel list-panel">
+        <div className="panel-header">
+          <TextField
+            placeholder="Keresés név, tag vagy ország alapján..."
+            variant="outlined"
+            size="small"
+            fullWidth
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <img className="search-icon" src={searchIcon} alt="Keresés" />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </div>
 
-        
-          <div className="image-actions">
-            {!isEditing ? (
-              <button
-                className="image-action-btn edit"
-                onClick={() => setIsEditing(true)}
-                title="Szerkesztés"
-              >
-                ✏️
-              </button>
-            ) : (
-              <>
-                <button
-                  className="image-action-btn save"
-                  onClick={handleSave}
-                  title="Mentés"
-                >
-                  ✓
-                </button>
+        <div className="list-title-row">
+          <h3>Mentett helyek</h3>
+          <span>{filteredPoints.length} hely</span>
+        </div>
 
-                <button
-                  className="image-action-btn cancel"
-                  onClick={() => {
-                    setFormData(selectedPoint)
-                    setIsEditing(false)
-                  }}
-                  title="Mégse"
-                >
-                  ✕
-                </button>
-              </>
-            )}
+        <div className="points-list">
+          {filteredPoints.length === 0 && (
+            <p className="empty-message">Nincs találat.</p>
+          )}
 
-            <button
-              className="image-action-btn delete"
-              onClick={handleDelete}
-              title="Törlés"
+          {filteredPoints.map((point) => (
+            <div
+              className={
+                selectedPoint?.id === point.id
+                  ? "point-card active"
+                  : "point-card"
+              }
+              key={point.id}
+              onClick={() => onSelectPoint(point)}
             >
-              🗑️
+              <div className="point-image">
+                {point.imagePreview ? (
+                  <img src={point.imagePreview} alt={point.title} />
+                ) : (
+                  <div className="placeholder"></div>
+                )}
+              </div>
+
+              <div className="point-info">
+                <h3>{point.title}</h3>
+
+                <div className="point-location">
+                  📍 {point.location || point.title}
+                </div>
+
+                <div className="point-tags">
+                  {point.category && (
+                    <span className="tag">{point.category}</span>
+                  )}
+
+                  {point.country && (
+                    <span className="country-tag">{point.country}</span>
+                  )}
+                </div>
+
+                {/* {point.description && <p>{point.description}</p>} */}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {selectedPoint && (
+        <div className="place-detail-panel">
+          <div className="detail-topbar">
+            <button className="back-btn" onClick={onBack}>
+              ← Vissza
             </button>
+
+            <div className="image-actions">
+              {!isEditing ? (
+                <button
+                  className="image-action-btn"
+                  onClick={() => setIsEditing(true)}
+                >
+                  ✎
+                </button>
+              ) : (
+                <>
+                  <button className="image-action-btn save" onClick={handleSave}>
+                    ✓
+                  </button>
+
+                  <button
+                    className="image-action-btn"
+                    onClick={() => {
+                      setFormData(selectedPoint)
+                      setIsEditing(false)
+                    }}
+                  >
+                    ✕
+                  </button>
+                </>
+              )}
+
+              <button className="image-action-btn delete" onClick={handleDelete}>
+                🗑
+              </button>
+            </div>
           </div>
 
-         
-        </div>
-      <div className="detail-image-card">
-        {selectedPoint.imagePreview ? (
+          <div className="detail-image-card">
+            {selectedPoint.imagePreview ? (
               <img
                 src={selectedPoint.imagePreview}
                 alt={selectedPoint.title}
-                onClick={() => setIsImageOpen(true)}
                 className="detail-image"
+                onClick={() => setIsImageOpen(true)}
               />
             ) : (
               <div className="detail-placeholder"></div>
             )}
-            </div>
-        <div className="detail-content">
-          {!isEditing ? (
-            <>
-              <h2 className="detail-title">{formData.title}</h2>
+          </div>
 
-              <div className="detail-meta">
-                {formData.country && (
-                  <span className="country-tag">{formData.country}</span>
-                )}
+          <div className="detail-content">
+            {!isEditing ? (
+              <>
+                <h2 className="detail-title">{formData.title}</h2>
 
-                {formData.category && (
-                  <span className="detail-tag">{formData.category}</span>
-                )}
-              </div>
+                <div className="detail-meta">
+                  {formData.country && (
+                    <span className="country-tag">{formData.country}</span>
+                  )}
 
-              <div className="detail-location">
-                📍 {formData.location || formData.title}
-              </div>
-
-              {formData.description && (
-                <div className="description-card">
-                  <span className="quote-mark">”</span>
-                  <p>{formData.description}</p>
+                  {formData.category && (
+                    <span className="detail-tag">{formData.category}</span>
+                  )}
                 </div>
-              )}
-            </>
-          ) : (
-            <>
-              <textarea
-                className="edit-title"
-                name="title"
-                value={formData.title || ""}
-                onChange={handleChange}
-                placeholder="Hely neve"
-              />
 
-              <div className="detail-meta">
-                {formData.country && (
-                  <span className="country-tag">{formData.country}</span>
+                <div className="detail-location">
+                  📍 {formData.location || formData.title}
+                </div>
+
+                {formData.description && (
+                  <div className="description-card">
+                    <span className="quote-mark">“</span>
+                    <p>{formData.description}</p>
+                  </div>
                 )}
+              </>
+            ) : (
+              <>
+                <textarea
+                  className="edit-title"
+                  name="title"
+                  value={formData.title || ""}
+                  onChange={handleChange}
+                  placeholder="Hely neve"
+                />
 
-                {formData.category && (
-                  <span className="detail-tag">{formData.category}</span>
-                )}
-              </div>
+                <div className="detail-meta">
+                  {formData.country && (
+                    <span className="country-tag">{formData.country}</span>
+                  )}
 
-              <div className="detail-location">
-                📍 {formData.location || formData.title}
-              </div>
+                  {formData.category && (
+                    <span className="detail-tag">{formData.category}</span>
+                  )}
+                </div>
 
-              <textarea
-                className="edit-description"
-                name="description"
-                value={formData.description || ""}
-                onChange={handleChange}
-                placeholder="Leírás"
-              />
-            </>
-          )}
+                <div className="detail-location">
+                  📍 {formData.location || formData.title}
+                </div>
+
+                <textarea
+                  className="edit-description"
+                  name="description"
+                  value={formData.description || ""}
+                  onChange={handleChange}
+                  placeholder="Leírás"
+                />
+              </>
+            )}
+          </div>
         </div>
+      )}
 
-        {isImageOpen && selectedPoint.imagePreview && (
-          <div className="image-modal" onClick={() => setIsImageOpen(false)}>
-            <img
-              src={selectedPoint.imagePreview}
-              alt={selectedPoint.title}
-              className="fullscreen-image"
-            />
-          </div>
-        )}
-      </div>
-    )
-  }
+      {/* {isImageOpen && selectedPoint?.imagePreview && (
+        <div className="photo-viewer-overlay" onClick={() => setIsImageOpen(false)}>
+          <div className="photo-viewer" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="photo-viewer-close"
+              onClick={() => setIsImageOpen(false)}
+            >
+              ✕
+            </button>
 
-  return (
-    <div className="saved-panel">
-      <div className="panel-header">
-        <TextField
-          placeholder="Keresés név, tag vagy ország alapján..."
-          variant="outlined"
-          size="small"
-          fullWidth
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <img className="search-icon" src={searchIcon} alt="Keresés" />
-              </InputAdornment>
-            ),
-          }}
-        />
-      </div>
+            <div className="photo-viewer-image-wrap">
+              <img
+                src={selectedPoint.imagePreview}
+                alt={selectedPoint.title}
+                className="photo-viewer-image"
+              />
+            </div>
 
-      <div className="points-list">
-        {filteredPoints.length === 0 && (
-          <p className="empty-message">Nincs találat.</p>
-        )}
+            <div className="photo-viewer-info">
+              <div>
+                <h3>{selectedPoint.title}</h3>
+                <p>📍 {selectedPoint.location || selectedPoint.title}</p>
+              </div>
 
-        {filteredPoints.map((point) => (
-          <div
-            className="point-card"
-            key={point.id}
-            onClick={() => onSelectPoint(point)}
-          >
-            <div className="point-image">
-              {point.imagePreview ? (
-                <img src={point.imagePreview} alt={point.title} />
-              ) : (
-                <div className="placeholder"></div>
+              {selectedPoint.category && (
+                <span className="detail-tag">{selectedPoint.category}</span>
               )}
             </div>
-
-            <div className="point-info">
-              <h3>{point.title}</h3>
-
-              <div className="point-location">
-                📍 {point.location || point.title}
-              </div>
-
-              <div className="point-tags">
-                {point.category && <span className="tag">{point.category}</span>}
-                {point.country && (
-                  <span className="country-tag">{point.country}</span>
-                )}
-              </div>
-
-              {point.description && <p>{point.description}</p>}
-            </div>
           </div>
-        ))}
-      </div>
-    </div>
+        </div>
+      )} */}
+    </>
   )
 }
