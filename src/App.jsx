@@ -18,6 +18,21 @@ function App() {
 
   const [user, setUser] = useState(null)
 
+  const handleDeletePoint = (id) => {
+    setPoints((prev) => prev.filter((point) => point.id !== id))
+    setSelectedPoint(null)
+  }
+
+  const handleUpdatePoint = (updatedPoint) => {
+    setPoints((prev) =>
+      prev.map((point) =>
+        point.id === updatedPoint.id ? updatedPoint : point
+      )
+    )
+
+    setSelectedPoint(updatedPoint)
+  }
+
   if (page === "landing") {
     return (
       <LandingPage
@@ -60,14 +75,17 @@ function App() {
           selectedPoint={selectedPoint}
           onSelectPoint={setSelectedPoint}
           onBack={() => setSelectedPoint(null)}
+          onDeletePoint={handleDeletePoint}
+          onUpdatePoint={handleUpdatePoint}
         />
       )}
+
       {activePanel === "files" && (
-      <CountryGroupsPanel
-        points={points}
-        setSelectedPoint={setSelectedPoint}
-        setActivePanel={setActivePanel}
-      />
+        <CountryGroupsPanel
+          points={points}
+          setSelectedPoint={setSelectedPoint}
+          setActivePanel={setActivePanel}
+        />
       )}
 
       {activePanel === "settings" && (
@@ -75,14 +93,17 @@ function App() {
       )}
 
       <Map
-      points={points}
-      setPoints={setPoints}
-      selectedPoint={selectedPoint}
-      setSelectedPoint={setSelectedPoint}
-      setActivePanel={setActivePanel}
-    />
+        points={points}
+        setPoints={setPoints}
+        selectedPoint={selectedPoint}
+        setSelectedPoint={setSelectedPoint}
+        setActivePanel={setActivePanel}
+      />
 
-      <div className="profile-button" onClick={() => setActivePanel("settings")}>
+      <div
+        className="profile-button"
+        onClick={() => setActivePanel("settings")}
+      >
         {user?.name?.charAt(0).toUpperCase()}
       </div>
     </div>

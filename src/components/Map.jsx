@@ -85,6 +85,8 @@ function FlyToPoint({ point }) {
   return null
 }
 
+
+
 export default function Map({
   points,
   setPoints,
@@ -180,29 +182,32 @@ export default function Map({
   }
 
   const handleSave = () => {
-    if (!selectedLatLng) return
+  if (!selectedLatLng) return
 
-    if (!formData.title.trim()) {
-      alert("Adj meg helynevet.")
-      return
-    }
-
-    const newPoint = {
-      id: Date.now(),
-      lat: selectedLatLng.lat,
-      lng: selectedLatLng.lng,
-      title: formData.title,
-      location: formData.title,
-      country: formData.country,
-      category: formData.category,
-      markerEmoji: formData.markerEmoji,
-      description: formData.description,
-      imagePreview: formData.image ? URL.createObjectURL(formData.image) : null,
-    }
-
-    setPoints((prev) => [...prev, newPoint])
-    resetForm()
+  if (!formData.title.trim()) {
+    alert("Adj meg helynevet.")
+    return
   }
+
+  const newPoint = {
+    id: Date.now(),
+    lat: selectedLatLng.lat,
+    lng: selectedLatLng.lng,
+    title: formData.title,
+    location: formData.title,
+    country: formData.country,
+    category: formData.category,
+    description: formData.description,
+    imagePreview: formData.image
+      ? URL.createObjectURL(formData.image)
+      : null,
+    markerEmoji: formData.markerEmoji,
+  }
+
+  setPoints((prev) => [...prev, newPoint])
+
+  resetForm()
+}
 
   return (
     <div className="map-wrapper">
