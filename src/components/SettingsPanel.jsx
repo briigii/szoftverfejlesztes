@@ -39,13 +39,6 @@ export default function SettingsPanel({ user, setUser }) {
         </div>
 
         <div className="profile-info">
-          <label>Név</label>
-          <input
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            disabled={!isEditing}
-          />
 
           <label>Felhasználónév</label>
           <input
