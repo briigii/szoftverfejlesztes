@@ -181,11 +181,21 @@ export default function Map({
     setShowForm(false)
   }
 
-  const handleSave = () => {
+ const handleSave = () => {
   if (!selectedLatLng) return
 
   if (!formData.title.trim()) {
     alert("Adj meg helynevet.")
+    return
+  }
+
+  if (!formData.category.trim()) {
+    alert("Adj meg kategóriát.")
+    return
+  }
+
+  if (!formData.image) {
+    alert("Tölts fel képet.")
     return
   }
 
@@ -198,9 +208,7 @@ export default function Map({
     country: formData.country,
     category: formData.category,
     description: formData.description,
-    imagePreview: formData.image
-      ? URL.createObjectURL(formData.image)
-      : null,
+    imagePreview: URL.createObjectURL(formData.image),
     markerEmoji: formData.markerEmoji,
   }
 
@@ -230,6 +238,7 @@ export default function Map({
             placeholder="Minek mented el? pl. Kedvenc"
             value={formData.category}
             onChange={handleChange}
+            required
           />
 
           <datalist id="category-options">
@@ -287,6 +296,7 @@ export default function Map({
             name="image"
             accept="image/*"
             onChange={handleChange}
+            required
           />
 
           {selectedLatLng && (
