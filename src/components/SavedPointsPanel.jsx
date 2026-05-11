@@ -141,7 +141,7 @@ export default function SavedPointsPanel({
                   className="image-action-btn"
                   onClick={() => setIsEditing(true)}
                 >
-                  ✎
+                  <img style={{width:"15px"}} src="src/assets/Edit_Pencil_01.svg" alt="" />
                 </button>
               ) : (
                 <>
@@ -162,7 +162,7 @@ export default function SavedPointsPanel({
               )}
 
               <button className="image-action-btn delete" onClick={handleDelete}>
-                🗑
+                Törlés
               </button>
             </div>
           </div>
@@ -201,7 +201,7 @@ export default function SavedPointsPanel({
 
                 {formData.description && (
                   <div className="description-card">
-                    <span className="quote-mark">“</span>
+                    <span className="description-title">Leírás</span>
                     <p>{formData.description}</p>
                   </div>
                 )}

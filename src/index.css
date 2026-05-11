@@ -54,6 +54,7 @@ body {
 .point-form h3 {
   margin-top: 0;
   margin-bottom: 12px;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .point-form input,
@@ -71,6 +72,15 @@ body {
   min-height: 90px;
   resize: vertical;
 }
+
+.new-point-buttons button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin: 5px;
+}
+
 
 .coords {
   font-size: 12px;
@@ -93,6 +103,12 @@ body {
 
 
 /* SavedPointsPanel*/
+.list-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
 .saved-panel {
   height: calc(100vh - 48px);
   position: absolute;
@@ -101,7 +117,7 @@ body {
   padding: 24px;
   box-sizing: border-box;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(18px);
   border-radius: 10px;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.16);
@@ -125,7 +141,7 @@ body {
   padding: 28px;
   box-sizing: border-box;
   overflow-y: auto;
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(18px);
   border-radius: 10px;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.16);
@@ -293,10 +309,8 @@ body {
 }
 
 .image-action-btn {
-  width: 48px;
-  height: 48px;
   border: none;
-  border-radius: 50%;
+  border-radius: 10px;
   background: rgba(255,255,255,0.95);
   backdrop-filter: blur(10px);
   box-shadow:0 6px 20px rgba(0,0,0,0.10);
@@ -339,9 +353,7 @@ body {
 .detail-description {
   font-size: 17px;
   line-height: 1.7;
-
   color: #374151;
-
   margin: 0;
 }
 
@@ -423,19 +435,36 @@ body {
 }
 
 
+.description-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.623);
+  border-radius: 18px;
+  padding: 16px 20px;
+  font-style: italic;
+}
+.description-title {
+  font-style: normal;
+  font-weight: 500;
+  color: #5b5b5b;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.description-card p {
+  font-style: normal;
+  font-family: Arial, Helvetica, sans-serif;
+}
 /* Sidebar css */
 
 .sidebar {
   width: 60px;
   height: 95vh;
-  background: #f5f5f5;
+  background: rgba(255, 255, 255);
   border-radius: 5px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding-top: 0px;
-  gap: 0px;
+  gap: 5px;
   box-sizing: border-box;
   z-index: 1000;
   position: absolute;
@@ -457,14 +486,17 @@ body {
   background: transparent;
   font-size: 22px;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .sidebar-btn:hover {
-  background: #e9e9e9;
+  background: #e5f4c7;
 }
 
 .sidebar-btn.active {
-  background: #dcdcdc;
+  background: #e5f4c7;
 }
 
 /* ========================================
@@ -517,25 +549,18 @@ body {
 }
 
 .image-action-btn {
-  width: 46px;
-  height: 46px;
-
+  width: 40px;
+  height: 40px;
+  border-radius: 30px;
   border: none;
-  border-radius: 50%;
-
   background: rgba(255,255,255,0.96);
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   cursor: pointer;
-
   font-size: 18px;
-
   box-shadow:
     0 10px 26px rgba(0,0,0,0.12);
-
   transition: 0.2s ease;
 }
 
@@ -549,6 +574,15 @@ body {
 
 .image-action-btn.delete {
   color: #b00020;
+  border-radius: 30px;
+  width: auto;
+  padding: 0 14px;
+
+}
+.image-action-btn.delete:hover {
+  background: #b00020;
+  color: white;
+
 }
 
 /* CONTENT */
@@ -656,6 +690,7 @@ body {
   margin: 0 0 6px;
   font-size: 26px;
   font-weight: 900;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .photo-viewer-info p {
@@ -682,7 +717,8 @@ body {
 .settings-panel {
   width: 400px;
   height: 95vh;
-  background: #f5f5f5;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(18px);
   border-radius: 5px;
   gap: 18px;
   box-sizing: border-box;
@@ -698,6 +734,7 @@ body {
   margin-top: 0;
   margin-bottom: 28px;
   font-size: 28px;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .profile-card {
@@ -710,12 +747,13 @@ body {
   width: 76px;
   height: 76px;
   border-radius: 50%;
-  background: #eeeeee;
+  background: #e5f4c7;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 32px;
   font-weight: 700;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .profile-info {
@@ -728,6 +766,7 @@ body {
   font-size: 13px;
   margin-bottom: 6px;
   color: #666;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .profile-info input {
@@ -758,7 +797,7 @@ body {
 }
 
 .edit-btn {
-  background: #eeeeee;
+  background: #ffffff;
 }
 
 .save-btn {
@@ -781,11 +820,13 @@ body {
 .danger-zone h3 {
   margin-top: 0;
   color: #b00020;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .danger-zone p {
   font-size: 14px;
   color: #555;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .delete-btn {
@@ -1087,6 +1128,7 @@ body {
   margin: 0;
   font-size: 32px;
   color: #111;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .showcase-card::after {
@@ -1150,7 +1192,8 @@ body {
 .country-panel {
   width: 400px;
   height: 95vh;
-  background: #f5f5f5;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(18px);
   border-radius: 5px;
   gap: 18px;
   box-sizing: border-box;
@@ -1165,6 +1208,7 @@ body {
 
 .country-panel h2 {
   margin-bottom: 16px;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .country-card {
@@ -1190,11 +1234,13 @@ body {
 .country-header h3 {
   margin: 0;
   font-size: 18px;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .country-header span {
   color: #666;
   font-size: 13px;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .country-content {
@@ -1262,6 +1308,6 @@ body {
   color: #777;
 }
 
-p {
+p , span , h3{
   font-family: Arial, Helvetica, sans-serif;
 }

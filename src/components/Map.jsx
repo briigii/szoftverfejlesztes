@@ -296,7 +296,7 @@ export default function Map({
             </p>
           )}
 
-          <div>
+          <div className="new-point-buttons">
             <button onClick={handleSave} disabled={loadingPlace}>
               Mentés
             </button>
