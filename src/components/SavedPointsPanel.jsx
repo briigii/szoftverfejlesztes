@@ -14,7 +14,9 @@ export default function SavedPointsPanel({
   const [searchTerm, setSearchTerm] = useState("")
   const [isEditing, setIsEditing] = useState(false)
   const [formData, setFormData] = useState(selectedPoint || {})
-  const [isImageOpen, setIsImageOpen] = useState(false)
+  /*const [isImageOpen, setIsImageOpen] = useState(false)*/
+  const [isMobilePanelView, setIsMobilePanelView] = useState(false)
+  const [mobileDetailOpen, setMobileDetailOpen] = useState(false)
 
   useEffect(() => {
     if (selectedPoint) {
@@ -55,8 +57,31 @@ export default function SavedPointsPanel({
     }
   }
 
+  useEffect(() => {
+  const checkSize = () => {
+    setIsMobilePanelView(window.innerWidth <= 1100)
+  }
+
+  checkSize()
+  window.addEventListener("resize", checkSize)
+
+  return () => window.removeEventListener("resize", checkSize)
+}, [])
+
+const showListPanel = !isMobilePanelView || !mobileDetailOpen
+const showDetailPanel = selectedPoint && (!isMobilePanelView || mobileDetailOpen)
+
+const handleBack = () => {
+  if (isMobilePanelView) {
+    setMobileDetailOpen(false)
+  } else {
+    onBack()
+  }
+}
+
   return (
     <>
+    {showListPanel && (
       <div className="saved-panel list-panel">
         <div className="panel-header">
           <TextField
@@ -94,7 +119,13 @@ export default function SavedPointsPanel({
                   : "point-card"
               }
               key={point.id}
-              onClick={() => onSelectPoint(point)}
+              onClick={() => {
+              onSelectPoint(point)
+
+              if (isMobilePanelView) {
+                setMobileDetailOpen(true)
+              }
+            }}
             >
               <div className="point-image">
                 {point.imagePreview ? (
@@ -121,17 +152,18 @@ export default function SavedPointsPanel({
                   )}
                 </div>
 
-                {/* {point.description && <p>{point.description}</p>} */}
+                
               </div>
             </div>
           ))}
         </div>
       </div>
+    )}
 
-      {selectedPoint && (
+      {showDetailPanel && (
         <div className="place-detail-panel">
           <div className="detail-topbar">
-            <button className="back-btn" onClick={onBack}>
+            <button className="back-btn" onClick={handleBack}>
               ← Vissza
             </button>
 

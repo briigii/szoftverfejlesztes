@@ -71,21 +71,37 @@ function MapClickHandler({ onMapClick }) {
   return null
 }
 
-function FlyToPoint({ point }) {
+function FlyToSelectedPoint({ selectedPoint }) {
   const map = useMap()
 
   useEffect(() => {
-    if (point) {
-      map.flyTo([point.lat, point.lng], 15, {
-        duration: 1.5,
-      })
-    }
-  }, [point, map])
+    if (!selectedPoint) return
+
+    const lat = selectedPoint.lat
+    const lng = selectedPoint.lng
+
+    if (!lat || !lng) return
+
+    const zoom = Math.max(map.getZoom(), 15)
+
+    // Eredeti marker pozíció pixel koordinátában
+    const point = map.project([lat, lng], zoom)
+
+    // Bal oldali panelek miatt jobbra toljuk a térkép középpontját
+    // Minél nagyobb ez az érték, annál jobban jobbra kerül a marker
+    const offsetX = window.innerWidth < 1100 ? 220 : 430
+
+    const shiftedPoint = point.subtract([offsetX, 0])
+    const shiftedLatLng = map.unproject(shiftedPoint, zoom)
+
+    map.flyTo(shiftedLatLng, zoom, {
+      animate: true,
+      duration: 0.8,
+    })
+  }, [selectedPoint, map])
 
   return null
 }
-
-
 
 export default function Map({
   points,
@@ -217,6 +233,7 @@ export default function Map({
   resetForm()
 }
 
+
   return (
     <div className="map-wrapper">
       {showForm && (
@@ -324,7 +341,7 @@ export default function Map({
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-        {selectedPoint && <FlyToPoint point={selectedPoint} />}
+        <FlyToSelectedPoint selectedPoint={selectedPoint} />
 
         <MapClickHandler onMapClick={handleMapClick} />
 
