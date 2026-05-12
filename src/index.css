@@ -1,10 +1,21 @@
 body {
   margin: 0;
 }
-.leaflet-bottom {
-  display: none;
+/* Leaflet zoom gomb áthelyezése jobb alsó sarokba */
+.leaflet-top.leaflet-left {
+  top: auto !important;
+  left: auto !important;
+  right: 24px !important;
+  bottom: 24px !important;
 }
 
+.leaflet-control-zoom {
+  margin: 0 !important;
+}
+.leaflet-bottom {
+  visibility: hidden;
+}
+  
 .profile-button {
   position: absolute;
   top: 20px;
