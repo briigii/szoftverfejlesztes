@@ -1,175 +1,347 @@
-
 # Interactive Map Application
 
-Modern, interaktív térképes webalkalmazás React és Leaflet használatával, amely lehetővé teszi saját helyek mentését, kategorizálását, keresését és térképes megjelenítését.
+Modern, interaktív térképes webalkalmazás React, Leaflet és Laravel használatával, amely lehetővé teszi saját helyek mentését, kategorizálását, keresését és térképes megjelenítését.
 
-## Projekt célja
+---
 
-A projekt célja egy olyan felhasználóbarát térképes alkalmazás fejlesztése, amelyben a felhasználók saját pontokat helyezhetnek el a térképen, ezekhez leírást, kategóriát és képet rendelhetnek, majd a mentett helyeket listában és térképen is megtekinthetik.
+# Projekt célja
 
-## Fő funkciók
+A projekt célja egy modern, felhasználóbarát térképes rendszer fejlesztése volt, amelyben a felhasználók saját pontokat helyezhetnek el a térképen, ezekhez kategóriát, leírást, képet és egyedi marker ikont rendelhetnek, majd a mentett helyeket listában és interaktív térképen is megtekinthetik.
 
-- Interaktív térkép megjelenítése Leaflet.js segítségével
-- Saját pontok elhelyezése a térképen kattintással
-- Automatikus helynév és ország felismerése reverse geocoding segítségével
-- Pontokhoz név, kategória, leírás és kép hozzáadása
-- Mentett pontok megjelenítése listában
-- Mentett pont részletes nézete
-- Markerre kattintva a mentett hely adatainak megjelenítése
-- Keresés név, kategória, ország és leírás alapján
-- Marker clustering, vagyis pontok csoportosítása kicsinyített térképen
-- Egyedi marker ikon használata
-- Profil és beállítások panel
-- Bejelentkezés és regisztrációs felület
-- Landing page interaktív térképes bemutatóval
+A projekt során kiemelt szerepet kapott:
 
-## Használt technológiák
+* a frontend és backend összekötése,
+* a REST API kommunikáció,
+* a térképes adatkezelés,
+* a reszponzív felhasználói felület kialakítása.
 
-### Frontend
+---
 
-- React
-- Vite
-- JavaScript
-- React Leaflet
-- Leaflet.js
-- Material UI
+# Fő funkciók
 
-### Térképes szolgáltatások
+* Interaktív térkép megjelenítése Leaflet.js segítségével
+* Saját pontok elhelyezése térképre kattintással
+* Automatikus helynév és ország felismerése reverse geocoding segítségével
+* Pontokhoz név, kategória, leírás és kép hozzáadása
+* Mentett pontok listázása
+* Mentett pont részletes nézete
+* Markerre kattintva popup információk megjelenítése
+* Keresés név, kategória, ország és leírás alapján
+* Marker clustering (pontok csoportosítása)
+* Egyedi marker ikonok használata
+* Profil és beállítások panel
+* Regisztráció és bejelentkezés
+* REST API alapú adatkezelés
+* Képfeltöltés Laravel backend segítségével
+* Reszponzív működés mobil és desktop környezetben
 
-- OpenStreetMap
-- Nominatim Reverse Geocoding
+---
 
-### Backend és adatbázis tervezett technológiák
+# Használt technológiák
 
-- Laravel
-- REST API
-- MySQL
-- Docker
+## Frontend
 
-## Projekt struktúra
+* React
+* Vite
+* JavaScript
+* React Leaflet
+* Leaflet.js
+* Material UI
+* CSS
+
+## Backend
+
+* Laravel
+* PHP
+* REST API
+* Sanctum autentikáció
+* File Storage kezelés
+
+## Adatbázis
+
+* MySQL
+
+## Térképes szolgáltatások
+
+* OpenStreetMap
+* Nominatim Reverse Geocoding
+
+## Verziókezelés
+
+* Git
+* GitHub
+
+---
+
+# Projekt struktúra
 
 ```bash
-src/
-├── assets/
-├── components/
-│   ├── AuthPage.jsx
-│   ├── LandingPage.jsx
-│   ├── Map.jsx
-│   ├── MapShowcase.jsx
-│   ├── SavedPointsPanel.jsx
-│   ├── SettingsPanel.jsx
-│   └── Sidebar.jsx
-├── App.jsx
-├── main.jsx
-└── index.css
+Interactive_map_frontend/
+├── src/
+│   ├── assets/
+│   ├── components/
+│   │   ├── AuthPage.jsx
+│   │   ├── CountryGroupsPanel.jsx
+│   │   ├── LandingPage.jsx
+│   │   ├── Map.jsx
+│   │   ├── SavedPointsPanel.jsx
+│   │   ├── SettingsPanel.jsx
+│   │   └── Sidebar.jsx
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css
+│
+interactive-map-backend/
+├── app/
+├── routes/
+├── database/
+├── storage/
+└── public/
 ```
 
-## Telepítés és futtatás
+---
 
-### 1. Repository klónozása
+# REST API működés
 
+A frontend és backend kommunikáció REST API segítségével történik.
+
+## Főbb API végpontok
+
+| Method | Endpoint         | Funkció              |
+| ------ | ---------------- | -------------------- |
+| GET    | /api/points      | Összes pont lekérése |
+| POST   | /api/points      | Új pont létrehozása  |
+| DELETE | /api/points/{id} | Pont törlése         |
+
+---
+
+# Adatbázis struktúra
+
+## points tábla
+
+| Mező        | Típus     | Leírás                |
+| ----------- | --------- | --------------------- |
+| id          | integer   | Azonosító             |
+| title       | string    | Hely neve             |
+| description | text      | Leírás                |
+| lat         | float     | Szélességi koordináta |
+| lng         | float     | Hosszúsági koordináta |
+| country     | string    | Ország                |
+| city        | string    | Város                 |
+| image_path  | string    | Kép elérési útja      |
+| created_at  | timestamp | Létrehozás ideje      |
+
+---
+
+# Telepítés és futtatás
+
+## Repo klónozásA
 ```bash
-git clone https://github.com/felhasznalonev/interactive-map.git
+git clone https://github.com/brigiii/Szoftverfejlesztes.git
 ```
 
-### 2. Projekt mappa megnyitása
+## Frontend telepítése
 
 ```bash
-cd interactive-map
-```
-
-### 3. Függőségek telepítése
-
-```bash
+cd Interactive_map_frontend
 npm install
-```
-
-### 4. Fejlesztői szerver indítása
-
-```bash
 npm run dev
 ```
 
-Az alkalmazás alapértelmezetten a következő címen érhető el:
+A frontend alapértelmezett címe:
 
 ```bash
 http://localhost:5173
 ```
 
-## Szükséges csomagok
+---
+
+## Backend telepítése
 
 ```bash
-npm install react-leaflet leaflet
-npm install react-leaflet-cluster
-npm install @mui/material @emotion/react @emotion/styled
+cd interactive-map-backend
+composer install
+php artisan migrate
+php artisan serve
 ```
 
-## Új pont létrehozásának folyamata
+A backend alapértelmezett címe:
+
+```bash
+http://127.0.0.1:8000
+```
+
+---
+
+# Új pont létrehozásának folyamata
 
 1. A felhasználó rákattint a térképre.
-2. Az alkalmazás lekéri a helyhez tartozó címet és országot.
-3. Megjelenik az új pont felvételi űrlap.
-4. A felhasználó megadja a kategóriát, leírást és opcionálisan képet tölt fel.
-5. Mentés után a pont megjelenik a térképen és a mentett pontok listájában.
+2. Az alkalmazás reverse geocoding segítségével lekéri a hely adatait.
+3. Megjelenik az adatbeviteli panel.
+4. A felhasználó megadja:
 
-## Mentett pontok kezelése
+   * a hely nevét,
+   * kategóriát,
+   * leírást,
+   * képet,
+   * marker ikont.
+5. A frontend POST kérést küld a backendnek.
+6. A backend eltárolja az adatokat MySQL adatbázisban.
+7. A pont megjelenik a térképen és a mentett pontok listájában.
 
-A mentett pontok a bal oldali panelen jelennek meg. Egy pontra kattintva megnyílik annak részletes nézete, ahol látható:
+---
 
-- a hely képe,
-- a hely neve,
-- az ország,
-- a kategória,
-- a leírás.
+# Mentett pontok kezelése
 
-Markerre kattintva szintén megnyílik a kapcsolódó mentett hely részletes nézete.
+A mentett pontok a bal oldali panelen jelennek meg.
 
-## Keresés
+Egy pontra kattintva megjelenik:
 
-A keresőmező segítségével a mentett helyek között lehet keresni:
+* a hely képe,
+* a hely neve,
+* az ország,
+* a kategória,
+* a leírás,
+* a marker ikon.
 
-- név alapján,
-- kategória alapján,
-- ország alapján,
-- leírás alapján.
+A felhasználó:
 
-## Marker clustering
+* szerkesztheti a pont adatait,
+* törölheti a pontot,
+* megtekintheti térképen.
 
-A térképen elhelyezett pontok kicsinyítés esetén automatikusan csoportosításra kerülnek. A csoportosított marker megjeleníti, hogy az adott területen hány mentett pont található.
+---
 
-## Beállítások és profil
+# Keresés és szűrés
 
-A jobb felső sarokban található profil ikon segítségével elérhető a beállítások panel. Itt a felhasználó:
+A rendszer támogatja a keresést:
 
-- megtekintheti az adatait,
-- szerkesztheti a profilját,
-- kezdeményezheti a fiók törlését.
+* név alapján,
+* kategória alapján,
+* ország alapján,
+* leírás alapján.
 
-## Tervezett backend integráció
+A keresés valós időben történik.
 
-A frontend jelenleg kliensoldali állapotkezeléssel működik. A későbbi fejlesztés során Laravel alapú backend kerül kialakításra, amely REST API-n keresztül biztosítja az adatok kezelését.
+---
 
-Tervezett API műveletek:
+# Marker clustering
 
-- pontok lekérdezése,
-- új pont mentése,
-- pont módosítása,
-- pont törlése,
-- kép feltöltése,
-- felhasználói adatok kezelése,
-- autentikáció.
+Kicsinyített térképnél a pontok automatikusan csoportosításra kerülnek.
 
-## Készítők
+A cluster marker megmutatja, hogy az adott területen hány pont található.
 
-- Bődör Brigitta
-- Kovács Dorina Angelika
-- Tóth Júlia
+Ez javítja:
 
-## Projekt típusa
+* az átláthatóságot,
+* a teljesítményt,
+* a felhasználói élményt.
 
-Szoftverfejlesztés projektfeladat  
-Mérnökinformatikus szak  
+---
+
+# Profil és beállítások
+
+A profil panel segítségével a felhasználó:
+
+* megtekintheti az adatait,
+* szerkesztheti profilját,
+* kezelheti a beállításokat,
+* törölheti a fiókját.
+
+---
+
+# Tesztelés
+
+A rendszer manuális funkcionális teszteléssel került ellenőrzésre.
+
+## Tesztelt funkciók
+
+* regisztráció,
+* bejelentkezés,
+* pont létrehozása,
+* pont törlése,
+* képfeltöltés,
+* API kommunikáció,
+* marker megjelenítés,
+* keresés,
+* mobil nézet,
+* popup rendszer.
+
+## Tesztelési eredmények
+
+A frontend és backend kommunikáció sikeresen működött.
+
+A rendszer megfelelően kezelte:
+
+* GET műveleteket,
+* POST műveleteket,
+* DELETE műveleteket.
+
+---
+
+# Feltárt hibák és javítások
+
+A tesztelés során egy felhasználói adatkezelési probléma került azonosításra.
+
+A regisztráció során a rendszer csak felhasználónevet kért be, emiatt:
+
+* a név mező üres maradt,
+* a felhasználónév jelent meg névként.
+
+A probléma oka a frontend és backend eltérő adatmodellje volt.
+
+## Javítási intézkedések
+
+* külön name mező bevezetése,
+* backend validáció módosítása,
+* frontend-backend adatstruktúrák egységesítése,
+* profiloldal javítása.
+
+---
+
+# Verziókezelés
+
+A projekt Git és GitHub használatával készült.
+
+A verziókezelés során:
+
+* commitok készültek,
+* branchek használata történt,
+* merge konfliktusok kerültek javításra,
+* frontend és backend integráció GitHub segítségével történt.
+
+---
+
+# Jövőbeli fejlesztések
+
+* többfelhasználós támogatás,
+* valós idejű szinkronizáció,
+* dark mode,
+* útvonaltervezés,
+* felhő alapú képtárolás,
+* kedvencek rendszer,
+* megosztható térképek.
+
+---
+
+# Készítők
+
+* Bődör Brigitta
+* Kovács Dorina Angelika
+* Tóth Júlia
+
+---
+
+# Projekt típusa
+
+Szoftverfejlesztés projektfeladat
+
+Mérnökinformatikus szak
+
 Szoftverfejlesztés specializáció
 
-## Licenc
+---
+
+# Licenc
+
 A projekt oktatási célra készült.
