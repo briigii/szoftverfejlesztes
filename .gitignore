@@ -1,0 +1,15 @@
+# Frontend
+Interactive_map_frontend/node_modules/
+Interactive_map_frontend/dist/
+Interactive_map_frontend/.env
+
+# Backend
+interactive-map-backend/vendor/
+interactive-map-backend/.env
+
+# VS Code
+.vscode/
+
+# System
+.DS_Store
+Thumbs.db
